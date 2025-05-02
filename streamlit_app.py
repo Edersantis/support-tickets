@@ -7,13 +7,13 @@ import pandas as pd
 import streamlit as st
 
 # Show app title and description.
-st.set_page_config(page_title="Support tickets", page_icon="🎫")
-st.title("🎫 Support tickets")
+st.set_page_config(page_title="Solicitudes Makers", page_icon="🎫")
+st.title("🎫 Solicitudes Makers")
 st.write(
     """
-    This app shows how you can build an internal tool in Streamlit. Here, we are 
-    implementing a support ticket workflow. The user can create a ticket, edit 
-    existing tickets, and view some statistics.
+    Esta app permite al Project Manager 
+    registrar y hacer seguimiento de los requerimientos
+    para los equipos de diseño y administrativos.
     """
 )
 
@@ -66,14 +66,14 @@ if "df" not in st.session_state:
 
 
 # Show a section to add a new ticket.
-st.header("Add a ticket")
+st.header("Agregar ticket")
 
 # We're adding tickets via an `st.form` and some input widgets. If widgets are used
 # in a form, the app will only rerun once the submit button is pressed.
 with st.form("add_ticket_form"):
-    issue = st.text_area("Describe the issue")
-    priority = st.selectbox("Priority", ["High", "Medium", "Low"])
-    submitted = st.form_submit_button("Submit")
+    issue = st.text_area("Describe el Requerimiento")
+    priority = st.selectbox("Prioridad", ["Alta", "Media", "Baja"])
+    submitted = st.form_submit_button("Enviar")
 
 if submitted:
     # Make a dataframe for the new ticket and append it to the dataframe in session
@@ -84,10 +84,10 @@ if submitted:
         [
             {
                 "ID": f"TICKET-{recent_ticket_number+1}",
-                "Issue": issue,
-                "Status": "Open",
-                "Priority": priority,
-                "Date Submitted": today,
+                "Requerimiento": issue,
+                "Status": "Abierto",
+                "Prioridad": priority,
+                "Fecha de Solicitud":today,
             }
         ]
     )
@@ -98,12 +98,12 @@ if submitted:
     st.session_state.df = pd.concat([df_new, st.session_state.df], axis=0)
 
 # Show section to view and edit existing tickets in a table.
-st.header("Existing tickets")
-st.write(f"Number of tickets: `{len(st.session_state.df)}`")
+st.header("Requerimientos")
+st.write(f"Número de tickets: `{len(st.session_state.df)}`")
 
 st.info(
-    "You can edit the tickets by double clicking on a cell. Note how the plots below "
-    "update automatically! You can also sort the table by clicking on the column headers.",
+    "Puede editar los tickets haciendo doble clic en una celda. Observe cómo los gráficos a continuación se actualizan automáticamente. "
+    "También puede ordenar la tabla haciendo clic en los encabezados de columna.",
     icon="✍️",
 )
 
@@ -132,18 +132,18 @@ edited_df = st.data_editor(
 )
 
 # Show some metrics and charts about the ticket.
-st.header("Statistics")
+st.header("Estadisticas")
 
 # Show metrics side by side using `st.columns` and `st.metric`.
 col1, col2, col3 = st.columns(3)
 num_open_tickets = len(st.session_state.df[st.session_state.df.Status == "Open"])
-col1.metric(label="Number of open tickets", value=num_open_tickets, delta=10)
-col2.metric(label="First response time (hours)", value=5.2, delta=-1.5)
-col3.metric(label="Average resolution time (hours)", value=16, delta=2)
+col1.metric(label="Numero de tickets abiertos", value=num_open_tickets, delta=10)
+col2.metric(label="First response time (horas)", value=5.2, delta=-1.5)
+col3.metric(label="Average resolution time (horas)", value=16, delta=2)
 
 # Show two Altair charts using `st.altair_chart`.
 st.write("")
-st.write("##### Ticket status per month")
+st.write("##### Ticket status por mes")
 status_plot = (
     alt.Chart(edited_df)
     .mark_bar()
